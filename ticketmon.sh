@@ -415,7 +415,6 @@ for ticket in $tickets; do
 	        printf '%s\n' "$ticket" >> "$tmpfile"
 	    else
 	        printf '%s\n' "$ticket" > "$tmpfile"
-	        chown root:wheel "$tmpfile"
 	        chmod 660 "$tmpfile"
 	        persist &
 	    fi
