@@ -380,17 +380,17 @@ for ticket in $tickets; do
 	                    updateticket
 	                    # Not sure about ClickSend, but other API communication
 	                    # providers do not allow emails in the SMS body
-	                    [ "$nnflag -eq 1 ] && \
+	                    [ "$nnflag" -eq 1 ] && \
 	                        sendsms "Ticket $ticketf closed due to example.com email."
 	                    log "closed due to $email email"
 	                else
-	                    [ "$nnflag -eq 1 ] && \
+	                    [ "$nnflag" -eq 1 ] && \
 	                        sendsms "Example ticket $ticketf has been submitted by an automated sender."
 	                    log "no action taken in FreshDesk since \`-c' flag not specified"
 	                fi
 	                ;;
 	            *)
-	                [ "$nnflag -eq 1 ] && \
+	                [ "$nnflag" -eq 1 ] && \
 	                    sendsms "Example ticket $ticketf was assigned to $agent."
 	                log "no action taken in FreshDesk since assigned to $agent"
 	                ;;
