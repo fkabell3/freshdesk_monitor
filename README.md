@@ -1,4 +1,8 @@
 # freshdeskmonitor
+Script which monitors the FreshDesk ticketing system and performs actions on tickets. Actions include closing tickets via source email, sending SMS notifications (optionally repeatedly until ticket is assigned), and logging.
+
+This script has a monetary cost for both FreshDesk (usually paid by employer) anad ClickSend APIs to send SMS.
+
 ```
 [fkabell@localhost ~]$ /usr/local/bin/ticketmon.sh -h
 usage: ticketmon.sh [-cehlnp] [-i SECONDS]
