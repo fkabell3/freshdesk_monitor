@@ -273,7 +273,7 @@ for cmd in curl jq; do
 done
 
 for var in number clicksendapikey; do
-	if [ -z "\$$var" ]; then
+	if eval [ -z "\$$var" ]; then
 	    nflag=0
 	    nnflag=0
 	    pflag=0
