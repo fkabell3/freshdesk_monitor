@@ -203,7 +203,7 @@ while getopts cehi:lnp opt 2>/dev/null; do
 	        ;;
 	    h)
 		cat <<- EOF
-		usage: $0 [-cehlnp] [-i SECONDS]
+		usage: $0 [-cehlnnp] [-i SECONDS]
 		Monitor, log, and perform actions on tickets created within the last minute.
 		Intended to be ran every minute via cron(1).
 
@@ -213,6 +213,7 @@ while getopts cehi:lnp opt 2>/dev/null; do
 		-i	Specify the persist interval for SMS notifications.
 		-l	Log to $logfile.
 		-n	Notify via SMS when a ticket is created.
+		-nn	Like above, but notify for automated senders as well.
 		-p	Persist SMS notifications. Implies \`-n'.
 
 		EOF
