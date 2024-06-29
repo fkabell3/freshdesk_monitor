@@ -395,7 +395,7 @@ for ticket in $tickets; do
 	                log "no action taken in FreshDesk since assigned to $agent"
 	                ;;
 	        esac
-	        exit 0
+	        continue
 	        ;;
 	    *)
 	        case "$agent" in
