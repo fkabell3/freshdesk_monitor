@@ -379,8 +379,8 @@ for ticket in $tickets; do
 	                    status=4    # Resolved
 	                    type='Example'
 	                    updateticket
-	                    # Not sure about ClickSend, but other API communication
-	                    # providers do not allow emails in the SMS body
+	                    # Not sure about ClickSend, but other communication
+	                    # API providers do not allow emails in the SMS body
 	                    [ "$nnflag" -eq 1 ] && \
 	                        sendsms "Ticket $ticketf closed due to example.com email."
 	                    log "closed due to $email email"
