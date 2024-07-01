@@ -331,7 +331,7 @@ fi
 eval "$(curl -s -u "$freshdeskapikey":X -X GET \
 	"$apiurl?updated_since=$earlier&include=requester" | \
 	jq --argjson unixearlier "$unixearlier" -r '.[] |
-	select (.created_at | fromdateiso8601 > $unixearlier ) |
+	select (.created_at | fromdateiso8601 > $unixearlier) |
 	"tickets=\"$tickets \(.id)\"
 	subject\(.id)=\"\(.subject)\"
 	status\(.id)=\"\(.status)\"
