@@ -82,14 +82,16 @@ formatticket() {
         eval ${1}f=\"${_ticketsf##' '}\"
 }
 
-# Check if a ticket is both open (status: 2) and unassigned.
+# Check if a ticket is open (status: 2), unassigned, and not deleted.
 checkticket() {
 	eval "$(curl -s -u "$freshdeskapikey":X -X GET \
-	    "$apiurl/$1?include=requester" | \
-	    jq -r '"_agentid=\"\(.responder_id)\"
-	    _status=\"\(.status)\""')"
+	    "$apiurl/$1?include=requester" | jq -r \
+	    '"_agentid=\"\(.responder_id)\"
+	    _status=\"\(.status)\"
+	    _deleted=\"\(.deleted)\""')"
 
-	if [ "$_status" -eq 2 ] && [ X"$_agentid" = Xnull ]; then
+	if [ "$_status" -eq 2 ] && [ X"$_agentid" = Xnull ] && \
+	    [ X"$_deleted" = Xnull ]; then
 	    return 0
 	else
 	    return 1
