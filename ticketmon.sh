@@ -134,7 +134,8 @@ sendsms() {
 
 	case "$_messagestatus" in
 	    SUCCESS)
-	        logsuffix=', SMS sent'
+	        [ "$firstsms" -eq 0 ] && logsuffix=', SMS sent'
+	        firstsms=1
 	        ;;
 	    INSUFFICIENT_CREDIT)
 	        error log warning 'SMS failed due to lack of credit'
@@ -188,6 +189,9 @@ persist() (
 	    esac
 	done
 )
+
+# Make sure $logsuffix does not get overwritten by sendsms()
+firstsms=0
 
 cflag=0
 eflag=0
