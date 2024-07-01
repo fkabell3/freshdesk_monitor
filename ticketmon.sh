@@ -64,7 +64,7 @@ formatticket() {
         _ticketsu="$(eval printf \"\$$1\")"
         for _ticket in $_ticketsu; do
             _ticketsf="$_ticketsf $(printf '%s' "#$_ticket" | rev | \
-	        sed 's/[[:digit:]]\{3\}/&,/g' | rev | sed 's/#,/#/')"
+	        sed -E 's/[[:digit:]]{3}/&,/g' | rev | sed 's/#,/#/')"
             _nticketsf=$((_nticketsf + 1))
         done
 	# Format tickets with correct comma and "and" word placement.
@@ -72,11 +72,11 @@ formatticket() {
             0|1);;
             2)
                 _ticketsf="$(printf '%s ' $_ticketsf | \
-	            sed 's/#\([[:digit:]]\|,\)* $/and &/; s/ $//')"
+	            sed -E 's/#([[:digit:]]|,)* $/and &/; s/ $//')"
                 ;;
             *)
                 _ticketsf="$(printf '%s, ' $_ticketsf | \
-	            sed 's/#\([[:digit:]]\|,\)*, $/and &/; s/, $//')"
+	            sed -E 's/#([[:digit:]]|,)*, $/and &/; s/, $//')"
                 ;;
         esac
         eval ${1}f=\"${_ticketsf##' '}\"
