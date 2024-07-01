@@ -190,7 +190,7 @@ persist() (
 	done
 )
 
-# Make sure $logsuffix does not get overwritten by sendsms()
+# Make sure $logsuffix does not get overwritten by sendsms().
 firstsms=0
 
 cflag=0
