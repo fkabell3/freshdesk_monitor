@@ -1,4 +1,3 @@
-# freshdeskmonitor
 POSIX shell script which monitors the Freshdesk ticketing system and performs actions on tickets. Actions include closing tickets via source email, sending SMS notifications (optionally repeatedly until ticket is assigned), and logging.
 
 This script has a monetary cost for both the Freshdesk and ClickSend APIs.
