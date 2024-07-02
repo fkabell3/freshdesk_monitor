@@ -416,7 +416,7 @@ for ticket in $tickets; do
 	        ;;
 	esac
 
-	if [ "$pflag" -eq 1 ] && [ "$status" -eq 2 ]; then
+	if [ "$pflag" -eq 1 ] && checkticket; then
 	    if [ -s "$tmpfile" ]; then
 	        printf '%s\n' "$ticket" >> "$tmpfile"
 	    else
