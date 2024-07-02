@@ -26,7 +26,7 @@ freshdesksubdomain=	# Input me!
 freshdeskapikey=	# Input me!
 
 number=+15555555555	# Input me!
-# Profile on top right corner -> "Accont Settings"
+# Profile on top right corner -> "Account Settings"
 clicksendapikey=	# Input me!
 
 persistinterval=120
@@ -114,7 +114,10 @@ updateticket() {
 }
 
 sendsms() {
-	[ "$nflag" -eq 1 ] || return 0
+	if [ "$nflag" -eq 0 ] || \
+	    { [ "$auto" -eq 1 ] && [ "$nnflag" -eq 0 ]; }; then
+	    return 0
+	fi
 
 	_messagestatus="$(curl \
 	    -X POST \
@@ -134,8 +137,7 @@ sendsms() {
 
 	case "$_messagestatus" in
 	    SUCCESS)
-	        [ "$firstsms" -eq 0 ] && logsuffix=', SMS sent'
-	        firstsms=1
+	        logsuffix=', SMS sent'
 	        ;;
 	    INSUFFICIENT_CREDIT)
 	        error log warning 'SMS failed due to lack of credit'
@@ -158,7 +160,6 @@ persist() (
 	            break
 	            ;;
 	        *)
-	            logsuffix="$logsuffix, persisting"
 	            # unassigned tickets
 	            _utickets=
 	            # number of unassigned tickets
@@ -189,9 +190,6 @@ persist() (
 	    esac
 	done
 )
-
-# Make sure $logsuffix does not get overwritten by sendsms().
-firstsms=0
 
 cflag=0
 eflag=0
@@ -348,6 +346,10 @@ eval "$(curl -s -u "$freshdeskapikey":X -X GET \
 [ -z "${tickets##' '}" ] && exit 0
 
 for ticket in $tickets; do
+	# Ticket is not from an automated
+	# sender unless otherwise specified.
+	auto=0
+
 	formatticket ticket
 	for var in subject status name email agentid; do
 	    eval $var=\$"$var$ticket"
@@ -377,6 +379,7 @@ for ticket in $tickets; do
 	        ;;
 	    # Input me!
 	    automated_sender@example.com)
+	        auto=1
 	        case "$agent" in
 	            unassigned)
 	                if [ "$cflag" -eq 1 ]; then
@@ -386,23 +389,19 @@ for ticket in $tickets; do
 	                    type='Example'
 	                    updateticket
 	                    # Not sure about ClickSend, but other communication
-	                    # API providers do not allow emails in the SMS body
-	                    [ "$nnflag" -eq 1 ] && \
-	                        sendsms "Ticket $ticketf closed due to example.com email."
-	                    log "closed due to $email email"
+	                    # API providers do not allow emails in the SMS body.
+	                    sendsms "Ticket $ticketf closed due to example.com email."
+	                    logmessage="closed due to $email email"
 	                else
-	                    [ "$nnflag" -eq 1 ] && \
-	                        sendsms "Example ticket $ticketf has been submitted by an automated sender."
-	                    log "no action taken in FreshDesk since \`-c' flag not specified"
+	                    sendsms "Example ticket $ticketf has been submitted by an automated sender."
+	                    logmessage="no action taken in FreshDesk since \`-c' flag not specified"
 	                fi
 	                ;;
 	            *)
-	                [ "$nnflag" -eq 1 ] && \
-	                    sendsms "Example ticket $ticketf was assigned to $agent."
-	                log "no action taken in FreshDesk since assigned to $agent"
+	                sendsms "Example ticket $ticketf was assigned to $agent."
+	                logmessage="no action taken in FreshDesk since assigned to $agent"
 	                ;;
 	        esac
-	        continue
 	        ;;
 	    *)
 	        case "$agent" in
@@ -416,7 +415,9 @@ for ticket in $tickets; do
 	        ;;
 	esac
 
-	if [ "$pflag" -eq 1 ] && checkticket; then
+	if [ "$pflag" -eq 1 ] && [ "$auto" -eq 0 ] && \
+	    checkticket "$ticket"; then
+	    logsuffix="$logsuffix, persisting"
 	    if [ -s "$tmpfile" ]; then
 	        printf '%s\n' "$ticket" >> "$tmpfile"
 	    else
@@ -424,6 +425,11 @@ for ticket in $tickets; do
 	        chmod 660 "$tmpfile"
 	        persist &
 	    fi
+	fi
+
+	if [ "$auto" -eq 1 ]; then
+	    log "$logmessage"
+	    continue
 	fi
 
 	# if the ticket does not have any comments/notes
